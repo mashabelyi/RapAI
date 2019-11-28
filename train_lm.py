@@ -33,7 +33,7 @@ def parse_args():
 
 	parser.add_argument("--data", default="data/rap_10", help="Data folder", required=True)
 	parser.add_argument("--name", default="model", help="Model Name", required=True)
-	
+
 	parser.add_argument("--batch_size", default=128, type=int, help="Batch Size")
 	parser.add_argument("--n_train", default=-1, type=int, help="Num training samples")
 	parser.add_argument("--n_val", default=-1, type=int, help="Nuum validation samples")
@@ -43,6 +43,9 @@ def parse_args():
 	parser.add_argument("--vocab_size", default=50000, help="Vocabulary size")
 	parser.add_argument("--domain_vocab", default=False, help="Flag to add domain vocab", action="store_true")
 	parser.add_argument("--domain_vocab_n", default=1000, type=int, help="Max number of domain vocab to add")
+
+	parser.add_argument("--dropout_rate", default=0.1, type=float, help="Dropout rate")
+
 
 	parser.add_argument("--train_artists", default=False, help="Flag to learn artist embeddings", action="store_true")
 	parser.add_argument("--artist_dim", default=100, help="Dimension of learned artist embeddings")
@@ -227,7 +230,11 @@ if __name__ == '__main__':
 
 		in_, out_, all_, out_counter = check_pretrained_coverage(tok2id, rap_vocab)
 
-	# TODO: save the new tok2id mapping in model folder
+	# save the new tok2id mapping in model folder
+	with open(os.path.join(model_dir, 'tok2id.tsv'), 'w') as f:
+		for k in tok2id:
+			f.write("{}\t{}\n".format(k, tok2id[k]))
+
 
 	# TOKENS -> IDS
 	x_train_id = np.array([[tok_to_id(t, tok2id) for t in seq] for seq in x_train])
@@ -244,7 +251,7 @@ if __name__ == '__main__':
 	# MODEL
 	print("\nINITIALIZEING MODEL")
 	if args.train_artists:
-		model = get_lstm_source(emb, lstm_size=args.lstm_size, emb_trainable=args.emb_trainable, 
+		model = get_lstm_source(emb, lstm_size=args.lstm_size, emb_trainable=args.emb_trainable, dropout_rate=args.dropout_rate,  
 			source_n=len(artist2id), source_dim=args.artist_dim, dense_dim=args.hidden_dim)
 
 		# TRAIN
@@ -254,7 +261,7 @@ if __name__ == '__main__':
 		        callbacks=[Perplexity(), best_acc, best_ppx, csv_logger])
 
 	else:
-		model = get_simple_lstm(emb, lstm_size=args.lstm_size, emb_trainable=args.emb_trainable)
+		model = get_simple_lstm(emb, lstm_size=args.lstm_size, emb_trainable=args.emb_trainable, dropout_rate=args.dropout_rate)
 		print(model.summary())
 		print("\n")
 

@@ -117,7 +117,7 @@ def get_lstm_source(embeddings, lstm_size=25, dropout_rate=0.1, emb_trainable=Tr
 	word_embedding_layer = Embedding(vocab_size,
 	                                word_embedding_dim,
 	                                weights=[embeddings],
-	                                trainable=True,
+	                                trainable=emb_trainable,
 	                                name='word_emb')
 	# source embeddings
 	source_embedding_layer = Embedding(source_n, 
@@ -145,7 +145,7 @@ def get_lstm_source(embeddings, lstm_size=25, dropout_rate=0.1, emb_trainable=Tr
 	combined = concatenate([embedded_sources, lstm_output])
 
 	# Dense layer over concat -> predict
-	combined = Dense(dense_dim, activation="tanh", name='dense')(combined)
+	combined = Dropout(dropout_rate)(Dense(dense_dim, activation="tanh", name='dense')(combined))
 	x=Dense(vocab_size, activation="softmax", name='predict')(combined)
 
 	# compile model
