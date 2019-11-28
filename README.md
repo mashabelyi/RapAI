@@ -6,8 +6,11 @@ Training a language model to generate rap lyrics. Work in progress!!
 
 ## Contents
 `model.py`: keras models defined
+
 `train_lm.py`: run to initiate training
+
 `Preprocess-Rap.ipynb`: jupyter notebook to pre-process and generate train/val/test splits
+
 `data/rap_max100_10`: train/val/test split of rap lyrics dataset containing 20 artists, 100 songs form each artist.
 
 ## Usage
@@ -61,7 +64,7 @@ Running `train_lm.py` trains the model for the specified number of epochs and sa
 
 **perplexity**: [perplexity](https://thegradient.pub/understanding-evaluation-metrics-for-language-models/) of model measured on the test set. Calculated as exp(cross_entropy_loss). Perplexity is a measure of surprisal -- it measures how well our model can predict the test set. Lower perplexity = less surpisal = better.
 
-## Data Processing
+## Data Pre-Processing
 
 ## Results
 
